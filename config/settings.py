@@ -38,13 +38,16 @@ INSTALLED_APPS = [
     # Авторизация с использованием JSON Web Token
     'rest_framework_simplejwt',
 
+    # Распределенная система обработки задач в фоновом режиме
+    'django_celery_beat',
+
     # Документация
     'drf_yasg',
 
     # Приложения
     'base.apps.BaseConfig',
     'users.apps.UsersConfig',
-
+    'sdk_weather.apps.SdkWeatherConfig',
 ]
 
 MIDDLEWARE = [
@@ -152,3 +155,19 @@ SIMPLE_JWT = {
 ADMIN_USERNAME = os.getenv('ADMIN_USERNAME')
 ADMIN_EMAIL = os.getenv('ADMIN_EMAIL')
 ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD')
+
+# Open weather map API KEYS
+WEATHER_API_KEY_1 = os.getenv('WEATHER_API_KEY_1')
+WEATHER_API_KEY_2 = os.getenv('WEATHER_API_KEY_2')
+
+# Celery
+CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL')
+CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND')
+CELERY_TIMEZONE = os.getenv('CELERY_TIMEZONE')
+CELERY_TASK_TRACK_STARTED = True
+CELERY_BEAT_SCHEDULE = {
+    'task-name': {
+        'task': 'sdk_weather.tasks.create_or_update_weather',
+        'schedule': timedelta(minutes=10),
+    },
+}
